@@ -11,37 +11,36 @@ class StockPicking(models.Model):
     )
 
     def button_validate(self):
-        # Elevar los permisos para toda la operación
-        self = self.sudo()
-        
         res = super(StockPicking, self).button_validate()
 
         for picking in self:  # Iterar sobre cada picking para asegurarnos de procesarlos por separado
             if picking.picking_type_id.code == 'internal' and picking.location_dest_id.usage == 'production':
                 for move in picking.move_ids:
                     # Asignar cuentas analíticas a los movimientos de stock y sus líneas
-                    move.sudo().analytic_account_ids = picking.analytic_account_ids
+                    move.analytic_account_ids = picking.analytic_account_ids
                     for move_line in move.move_line_ids:
-                        move_line.sudo().analytic_account_ids = picking.analytic_account_ids
+                        move_line.analytic_account_ids = picking.analytic_account_ids
 
                     # Encontrar el asiento contable relacionado con el movimiento de stock
-                    account_move = move.account_move_ids[:1].sudo()
+                    account_move = move.account_move_ids[:1]
                     if account_move:
-                        for line in account_move.line_ids.sudo():  # Elevar permisos para modificar las líneas del asiento contable
+                        account_move.sudo()  # Elevar permisos antes de modificar líneas contables
+                        for line in account_move.line_ids:
                             # Asegurarse de que la distribución analítica sea del 100%
                             if picking.location_id.usage == 'production' and line.debit != 0.0:
-                                analytic_distribution = {analytic_account.id: 100 for analytic_account in picking.analytic_account_ids}
-                                line.write({
+                                analytic_distribution = {analytic_account.id: 100 for analytic_account in picking.analytic_account_ids}+
+                                line.sudo().write({
                                     'analytic_distribution': analytic_distribution
                                 })
                             elif picking.location_dest_id.usage == 'production' and line.credit != 0.0:
                                 analytic_distribution = {analytic_account.id: 100 for analytic_account in picking.analytic_account_ids}
-                                line.write({
+                                line.sudo().write({
                                     'analytic_distribution': analytic_distribution
                                 })
-                        account_move.sudo().post()  # Asegurarse de que el asiento contable sea publicado después de la modificación
+                        account_move.post()  # Publicar el asiento contable después de modificarlo
 
         return res
+
 
 
 
