@@ -39,8 +39,10 @@ class StockPicking(models.Model):
                                 line.write({
                                     'analytic_distribution': analytic_distribution
                                 })
+                        account_move.sudo().post()  # Asegurarse de que el asiento contable sea publicado después de la modificación
 
         return res
+
 
 
 
