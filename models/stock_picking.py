@@ -28,7 +28,7 @@ class StockPicking(models.Model):
                         for line in account_move.line_ids:
                             # Asegurarse de que la distribución analítica sea del 100%
                             if picking.location_id.usage == 'production' and line.debit != 0.0:
-                                analytic_distribution = {analytic_account.id: 100 for analytic_account in picking.analytic_account_ids}+
+                                analytic_distribution = {analytic_account.id: 100 for analytic_account in picking.analytic_account_ids}
                                 line.sudo().write({
                                     'analytic_distribution': analytic_distribution
                                 })
