@@ -30,7 +30,7 @@ class StockPicking(models.Model):
                                     'analytic_distribution': analytic_distribution
                                 })
                                 # Buscar y actualizar la contracuenta
-                                contra_line = account_move.line_ids.filtered(lambda l: l.account_id.id == line.account_id.id and l.id != line.id)
+                                contra_line = account_move.line_ids.filtered(lambda l: l.account_id.id == line.account_id.id and l.debit == 0.0)
                                 if contra_line:
                                     contra_line.sudo().write({
                                         'analytic_distribution': analytic_distribution
@@ -41,13 +41,14 @@ class StockPicking(models.Model):
                                     'analytic_distribution': analytic_distribution
                                 })
                                 # Buscar y actualizar la contracuenta
-                                contra_line = account_move.line_ids.filtered(lambda l: l.account_id.id == line.account_id.id and l.id != line.id)
+                                contra_line = account_move.line_ids.filtered(lambda l: l.account_id.id == line.account_id.id and l.credit == 0.0)
                                 if contra_line:
                                     contra_line.sudo().write({
                                         'analytic_distribution': analytic_distribution
                                     })
 
         return res
+
 
 
     #version individual de validacion
