@@ -24,30 +24,27 @@ class StockPicking(models.Model):
                     if account_move:
                         account_move.sudo()
                         for line in account_move.line_ids:
+                            analytic_distribution = {analytic_account.id: 100 for analytic_account in picking.analytic_account_ids}
+
+                            # Distribuir en la cuenta principal
                             if picking.location_id.usage == 'production' and line.debit != 0.0:
-                                analytic_distribution = {analytic_account.id: 100 for analytic_account in picking.analytic_account_ids}
                                 line.sudo().write({
                                     'analytic_distribution': analytic_distribution
                                 })
-                                # Buscar y actualizar la contracuenta
-                                contra_line = account_move.line_ids.filtered(lambda l: l.account_id.id == line.account_id.id and l.debit == 0.0)
-                                if contra_line:
-                                    contra_line.sudo().write({
-                                        'analytic_distribution': analytic_distribution
-                                    })
                             elif picking.location_dest_id.usage == 'production' and line.credit != 0.0:
-                                analytic_distribution = {analytic_account.id: 100 for analytic_account in picking.analytic_account_ids}
                                 line.sudo().write({
                                     'analytic_distribution': analytic_distribution
                                 })
-                                # Buscar y actualizar la contracuenta
-                                contra_line = account_move.line_ids.filtered(lambda l: l.account_id.id == line.account_id.id and l.credit == 0.0)
-                                if contra_line:
-                                    contra_line.sudo().write({
-                                        'analytic_distribution': analytic_distribution
-                                    })
+
+                            # Distribuir en la contracuenta
+                            contra_line = account_move.line_ids.filtered(lambda l: l.account_id.id != line.account_id.id and l.id != line.id)
+                            if contra_line:
+                                contra_line.sudo().write({
+                                    'analytic_distribution': analytic_distribution
+                                })
 
         return res
+
 
 
 
