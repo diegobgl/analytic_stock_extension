@@ -5,7 +5,7 @@ class StockMove(models.Model):
 
     analytic_account_ids = fields.Many2many(
         'account.analytic.account',
-        string='Analytic Accounts'
+        string='Analytic Accounts',  required=True
     )
 
 class StockMoveLine(models.Model):
@@ -13,5 +13,5 @@ class StockMoveLine(models.Model):
 
     analytic_account_ids = fields.Many2many(
         'account.analytic.account',
-        string='Analytic Accounts'
+        string='Analytic Accounts',  required=True
     )
