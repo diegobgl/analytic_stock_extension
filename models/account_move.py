@@ -5,7 +5,7 @@ class AccountMove(models.Model):
 
     analytic_account_ids = fields.Many2many(
         'account.analytic.account',
-        string='Analytic Accounts',  required=True
+        string='Analytic Accounts'
     )
 
 class AccountMoveLine(models.Model):
@@ -13,5 +13,5 @@ class AccountMoveLine(models.Model):
 
     analytic_account_ids = fields.Many2many(
         'account.analytic.account',
-        string='Analytic Accounts',  required=True
+        string='Analytic Accounts' 
     )

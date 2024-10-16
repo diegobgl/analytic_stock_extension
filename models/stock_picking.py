@@ -7,7 +7,7 @@ class StockPicking(models.Model):
 
     analytic_account_ids = fields.Many2many(
         'account.analytic.account',
-        string='Analytic Accounts', required=True
+        string='Analytic Accounts', required=False
     )
     
     def button_validate(self):
@@ -46,8 +46,6 @@ class StockPicking(models.Model):
         return res
 
 
-
-
     #version individual de validacion
     # def button_validate(self):
     #     res = super(StockPicking, self).button_validate()
@@ -78,7 +76,7 @@ class StockMove(models.Model):
 
     analytic_account_ids = fields.Many2many(
         'account.analytic.account',
-        string='Analytic Accounts', required=True
+        string='Analytic Accounts', required=False
     )
 
 class StockMoveLine(models.Model):
@@ -86,5 +84,5 @@ class StockMoveLine(models.Model):
 
     analytic_account_ids = fields.Many2many(
         'account.analytic.account',
-        string='Analytic Accounts', required=True
+        string='Analytic Accounts', required=False
     )
